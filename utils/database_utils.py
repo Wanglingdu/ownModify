@@ -14,7 +14,7 @@ def rop_help():
     print("-------------------------------\n")
 
 def clear_users():
-    conn = pymysql.connect(user='root',port=8888,passwd='123456',host='localhost',db=dbname,charset='utf8')
+    conn = pymysql.connect(user='root',port=3306,passwd='123',host='localhost',db=dbname,charset='utf8')
     cur = conn.cursor()
     sql = "delete from users;"
     cur.execute(sql)
@@ -24,7 +24,7 @@ def clear_users():
     print("\n清空用户表成功！")
 
 def clear_ropinfo():
-    conn = pymysql.connect(user='root',port=8888,passwd='123456',host='localhost',db=dbname,charset='utf8')
+    conn = pymysql.connect(user='root',port=3306,passwd='123',host='localhost',db=dbname,charset='utf8')
     cur = conn.cursor()
     sql = "delete from bc_info;"
     cur.execute(sql)
@@ -37,7 +37,7 @@ def insert_user():
     username = input("\n输入一个新的用户名:")
     passwd = input("输入你的密码:")
     pass_hash = generate_password_hash(passwd)
-    conn = pymysql.connect(user='root',port=8888,passwd='123456',host='localhost',db=dbname,charset='utf8')
+    conn = pymysql.connect(user='root',port=3306,passwd='123',host='localhost',db=dbname,charset='utf8')
     cur = conn.cursor()
     insert_sql = "insert into users (username, password_hash) values ('" + username + "','" + pass_hash + "');"
     cur.execute(insert_sql)

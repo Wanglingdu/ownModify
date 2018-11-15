@@ -12,7 +12,7 @@ model_port='8999'
 web_dir="/home/milab/workspace/DeepRop"
 web_url="http://127.0.0.1:7777"
 web_port='7777'
-password="123456"
+password="123"
 check_interval='10s'
 ##################################
 
