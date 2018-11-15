@@ -8,3 +8,4 @@ pymysql
 flask_login
 scikit-image
 opencv-python
+scipy
