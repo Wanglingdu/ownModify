@@ -1,0 +1,10 @@
+flask
+flask-bootstrap
+flask-wtf
+flask-SQLAlchemy
+flask-uploads
+pillow
+pymysql
+flask_login
+scikit-image
+opencv-python
