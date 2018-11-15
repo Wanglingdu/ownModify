@@ -1,0 +1,240 @@
+﻿{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content%}
+
+<!-- Sidbar Start -->
+    <div class="navbar-default sidebar">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav in" id="side-menu">
+                <li>
+                    <div>
+                    <div class="text-center text-muted row dp_date_today" style="margin-top: -30px;">2017</div>
+                    <div class="text-center row">欢迎！<span>{{ session.username }}</span></div>
+                    </div>
+                </li>
+                <li><a class="btn active" href="/index">上传报告</a></li>
+                <li><a class="btn active" href="/show">历史上传</a></li>
+                <!-- <li><a class="btn" href="/help">操作指南</a></li> -->
+            </ul>
+        </div>
+    </div>
+<!-- Sidebar End  -->
+    <!-- Wrapper Div  -->
+    <div id="page-wrapper" style="overflow: auto">
+
+        <!-- CONTROL TABLE -->
+        <div class="col-md-8" style="margin-top:40px">
+            <div id="bc_box_main" class="box box-widget box-blue">
+                <!-- Form Div  -->
+                <div class="dp_upload_form">
+                    <!-- This is the form for upload pictures -->
+                    <form class="form-inline" id="upload_img" action="index">
+                          <div class="text-center">
+                            <div id="bc_input_parent" style="height:70px">
+                                <div class="dp_input_bg panel"><span id="dp_bg_txt">上传报告</span> <span id="progressNumber"></span></div>
+                                <input class="dp_input_file" id="inputFile" name="file" type="file"  multiple webkitdirectory="">
+                            </div>
+                        </div>
+
+                    </form>
+
+                    <!-- This is the button -->
+                    <div id="bc_start">
+                        <button class="btn btn-bcgreen btn-lg" id="bc_start_btn">开始诊断</button>
+                        <br>
+                    </div>
+
+                </div><!-- Form panel-body div End -->
+
+                <div id ="bc_main_overlay" class="overlay" style="display:none;">
+					<div class="wrapper">
+						<div class="cssload-loader"></div>
+					</div>
+					<p id="dp_bg_txt">正在诊断，请稍后... </p>
+                </div>
+            </div><!-- Big Box End -->
+
+
+            <div id="bc_box_show" class="box box-widget box-blue">
+                <!-- Form Div  -->
+                <div class="dp_upload_form" style="min-height:500px">
+                    <!-- This is the big report -->
+                    <div>
+                        <div id="bc_big_report_title"><h4>已上X光图片：</h4></div>
+                        <img id="bc_big_report">
+                    </div>
+
+                     <!-- This is the result! -->
+                    <div id="bc_result_box" style="display:none;">
+                        <!-- Report head -->
+                        <!-- div><img class="bc_report_logo" src="static/img/logoReport.png"></div>-->
+                        <div style="width:100%;height:1px;margin:0px auto;padding:0px;background-color:#D5D5D5;overflow:hidden;"></div>
+                         <!-- Report -->
+                        <div id="bc_resbox_row" >
+
+                            <div class="col-md-6 bc_each_img">
+      	                          <img src="/static/img/0913_1_1.jpg">
+                                <span>诊断结果：癌症70.7%</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div><!-- Form panel-body div End -->
+            </div><!-- Big Box End -->
+        </div>
+        <div class="col-md-4" style="margin-top:40px">
+            <div class="box box-blue">
+                <div class="box-footer">
+                    <a  id="bc_down_report" download="下载报告" class="btn logoutBtn">下载报告</a>
+                </div>
+                <!-- /.box-footer-->
+              </div>
+        </div>
+
+
+        <!-- SHOW BOX -->
+        <div class="col-md-8">
+
+        </div>
+
+
+
+    </div><!-- Wrapper End -->
+
+<script>
+// Input file dom
+inputDom = $("#inputFile");
+startBtn = $("#bc_start_btn");
+window.onload = function() {
+     // 时间显示
+    dateDom =  $(".dp_date_today")[0];
+    dateDom.innerText = new Date().toLocaleString( );
+
+    // ------------------------------
+    //          图片上传部分
+    // ------------------------------
+    // 图片上传效果开始
+    inputDom.change(function(){
+        str =  "上传中，请稍后...";
+	     console.log(str);
+        $("#dp_bg_txt")[0].innerText = str;
+        $("#bc_resbox_row")[0].innerHTML = "";  // 消除之前的结果
+        $("#bc_result_box")[0].style.display = "none";
+        uploadFile();
+    });
+    // 完成上传后的页面更新
+    function afterPage(){
+        str =  "请开始检测";
+        $("#dp_bg_txt")[0].innerText = str; //改变文字
+        //inputDom[0].disabled = "true"; //无法上传
+        //$(".dp_input_bg")[0].style.background = "#eaeaea"; // 颜色变灰
+        $("#bc_input_parent")[0].style.display = "none"; // 隐藏input背景
+        startBtn[0].style.display = "initial";           // 重新显示上传按钮
+        document.getElementById('progressNumber').innerHTML = '';
+    }
+    // 回到上传前的初始值
+    function beforePage(){
+        str =  "再次上传报告";
+        $("#dp_bg_txt")[0].innerText = str; //改变文字
+
+        //inputDom[0].disabled = false; //可以上传
+        //$(".dp_input_bg")[0].style.background = "#5cc6c6"; //颜色变青
+        $("#bc_input_parent")[0].style.display = "initial"
+
+        startBtn[0].style.display = "none"; // 隐藏按钮
+        $("#bc_big_report")[0].src = ""; // 大图报告隐藏
+    }
+    // 发起上传请求并绑定相应事件
+    function uploadFile() {
+        var fd = new FormData();
+        //console.log(inputDom[0].files.length);
+        for (var i = 0; i <  inputDom[0].files.length; i++) {
+            var name = "report"+ i.toString();
+            console.log(name);
+            fd.append(name, inputDom[0].files[i]);
+        }
+        
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("progress", uploadProgress, false);
+        xhr.addEventListener("load", uploadComplete, false);
+        xhr.addEventListener("error", uploadFailed, false);
+        xhr.addEventListener("abort", uploadCanceled, false);
+        xhr.open("POST", "/index");
+        xhr.send(fd);
+      }
+        // 更新图片上传进度
+      function uploadProgress(evt) {
+        if (evt.lengthComputable) {
+          var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+          document.getElementById('progressNumber').innerHTML = percentComplete.toString() + '%';
+        }
+        else {
+          document.getElementById('progressNumber').innerHTML = '[无法计算大小]';
+        }
+      }
+        //完成图片上传
+      function uploadComplete(evt) {
+        /* 当服务器响应后，这个事件就会被触发 */
+        res = JSON.parse(evt.target.responseText)
+        console.log(res.url);
+        // 展示图片
+        $("#bc_big_report_title")[0].style.opacity = "1";
+        $("#bc_big_report")[0].src = res.url;
+        afterPage();
+      }
+
+      function uploadFailed(evt) {
+        alert("上传文件发生了错误尝试");
+      }
+
+      function uploadCanceled(evt) {
+        alert("上传被用户取消或者浏览器断开连接");
+      }
+
+    // ------------------------------
+    //          检测部分
+    // ------------------------------
+    // 开始检测
+    $("#bc_start_btn").click(function(){
+        loading(); //loading界面
+        $.ajax({
+            url: "/MammogramDetect",
+            success: function(result,status,xhr){
+                alert("检测成功");
+                console.log(result);
+                // 开始渲染
+                beforePage();
+                report = result['report_path'];
+                $("#bc_big_report")[0].src = report;
+                $("#bc_down_report")[0].style.display = "initial";
+                $("#bc_down_report")[0].href = report;
+
+                // 取消加载
+                unloading();
+            },
+            error: function(xhr,status,error){
+                alert("检测失败，请重新上传");
+                unloading();
+            }
+         });
+
+    });
+
+
+    // Box加载效果显示
+    function loading(){
+        $("#bc_big_report_title")[0].style.opacity = "0";
+        $("#bc_main_overlay")[0].style.display="initial";
+    }
+    // Box加载取消
+    function unloading(){
+        $("#bc_main_overlay")[0].style.display="none";
+    }
+};
+
+
+</script>
+
+{% endblock %}

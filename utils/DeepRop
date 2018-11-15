@@ -1,0 +1,74 @@
+#! /bin/bash
+# author:Yong Pi
+# date:2017/9/24
+# 简介：ROP试用系统一键启动程序
+###################################################
+export PATH=/home/milab/anaconda3/bin:$PATH
+# 增加socket 连接数　提升同时上传文件数量
+ulimit -n 2048
+# Variables
+model_dir="/home/workspace/DeepRop/models/rpc_server/"
+model_port='8999'
+web_dir="/home/milab/workspace/DeepRop"
+web_url="http://127.0.0.1:7777"
+web_port='7777'
+password="123456"
+check_interval='10s'
+##################################
+
+function rop_model() {
+  # 启动后台模型计算服务
+  echo "欢迎使用DeepRop系统 V1.0"
+  echo '123456' | sudo -S docker stop deepeyes
+  echo "开始启动docker"
+  sudo docker start deepeyes
+  echo "开始启动rop_normal模型"
+  sudo docker exec -d deepeyes  bash -c "cd $model_dir && python inference.py"
+  echo "启动模型成功"
+}
+
+function rop_system() {
+  echo '123456' | sudo -S docker stop rop-mysql &>/dev/null
+  echo '开始启动web服务'
+  sudo docker start rop-mysql &>/dev/null
+  cd $web_dir
+  date >>weblogs
+  python run.py &>>weblogs &
+  pid=$!
+  echo "web服务开启中，请稍后"
+  sleep 5s
+  echo "web服务开启成功，正在打开浏览器..."
+  echo "现在，开始尽情享受人工智能带来的乐趣吧"
+  google-chrome --app $web_url &>/dev/null
+}
+
+function check_port() {
+  # 检查端口是否还存在，存在返回true，不存在返回false
+  ss -antl | grep "$1" > /dev/null
+  if [ $? == 0 ]
+  then
+    exist=0
+  else
+    exist=1
+  fi
+  return $exist
+}
+
+function restart_service() {
+  check_port $2
+  if [ $? == 1 ]
+  then
+    $1
+  fi
+}
+
+# kill all service
+kill -9 `lsof -t -i:7777` &>/dev/null
+kill -9 `echo '123456' | sudo -S lsof -t -i:8999 &>/dev/null` &>/dev/null
+
+while true
+do
+  restart_service 'rop_model' $model_port
+  restart_service 'rop_system' $web_port
+  sleep $check_interval
+done

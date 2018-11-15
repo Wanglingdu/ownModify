@@ -1,0 +1,220 @@
+﻿{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content%}
+
+<!-- Sidbar Start -->
+    <div class="navbar-default sidebar">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav in" id="side-menu">
+                <li>
+                    <div>
+                    <div class="text-center text-muted row dp_date_today" style="margin-top: -30px;">2017</div>
+                    <div class="text-center row">欢迎！<span>{{ session.username }}</span></div>
+                    </div>
+                </li>
+                <li><a class="btn active" href="/index">上传报告</a></li>
+                <li><a class="btn active" href="/show">历史上传</a></li>
+                <!-- <li><a class="btn" href="/help">操作指南</a></li> -->
+            </ul>
+        </div>
+    </div>
+<!-- Sidebar End  -->
+
+<!-- Wrapper Div  -->
+    <div id="page-wrapper" style="overflow: auto">
+        <div class="container", id = "bc_start_btn">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>人名</th>
+                    <th>日期</th>
+                    <th>模型结果</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for i in range(length) %}
+              <tr>
+                <td>{{ name[i] }}</td>
+                <td>{{ time[i] }}</td>
+                <td><a href="{{ label[i] }}" target="_blank">report</a></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+
+<script>
+// Input file dom
+inputDom = $("#inputFile");
+startBtn = $("#bc_start_btn");
+window.onload = function() {
+     // 时间显示
+    dateDom =  $(".dp_date_today")[0];
+    dateDom.innerText = new Date().toLocaleString( );
+
+    // ------------------------------
+    //          图片上传部分
+    // ------------------------------
+    // 图片上传效果开始
+    inputDom.change(function(){
+        str =  "上传中，请稍后...";
+	     console.log(str);
+        $("#dp_bg_txt")[0].innerText = str;
+        $("#bc_resbox_row")[0].innerHTML = "";  // 消除之前的结果
+        $("#bc_result_box")[0].style.display = "none";
+        uploadFile();
+    });
+    // 完成上传后的页面更新
+    function afterPage(){
+        str =  "请开始检测";
+        $("#dp_bg_txt")[0].innerText = str; //改变文字
+        //inputDom[0].disabled = "true"; //无法上传
+        //$(".dp_input_bg")[0].style.background = "#eaeaea"; // 颜色变灰
+        $("#bc_input_parent")[0].style.display = "none"; // 隐藏input背景
+        startBtn[0].style.display = "initial";           // 重新显示上传按钮
+        document.getElementById('progressNumber').innerHTML = '';
+    }
+    // 回到上传前的初始值
+    function beforePage(){
+        str =  "再次上传报告";
+        $("#dp_bg_txt")[0].innerText = str; //改变文字
+
+        //inputDom[0].disabled = false; //可以上传
+        //$(".dp_input_bg")[0].style.background = "#5cc6c6"; //颜色变青
+        $("#bc_input_parent")[0].style.display = "initial"
+
+        startBtn[0].style.display = "none"; // 隐藏按钮
+        $("#bc_big_report")[0].src = ""; // 大图报告隐藏
+    }
+    // 发起上传请求并绑定相应事件
+    function uploadFile() {
+        var fd = new FormData();
+        fd.append("reportImg", inputDom[0].files[0]);
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("progress", uploadProgress, false);
+        xhr.addEventListener("load", uploadComplete, false);
+        xhr.addEventListener("error", uploadFailed, false);
+        xhr.addEventListener("abort", uploadCanceled, false);
+        xhr.open("POST", "/index");
+        xhr.send(fd);
+      }
+        // 更新图片上传进度
+      function uploadProgress(evt) {
+        if (evt.lengthComputable) {
+          var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+          document.getElementById('progressNumber').innerHTML = percentComplete.toString() + '%';
+        }
+        else {
+          document.getElementById('progressNumber').innerHTML = '[无法计算大小]';
+        }
+      }
+        //完成图片上传
+      function uploadComplete(evt) {
+        /* 当服务器响应后，这个事件就会被触发 */
+        res = JSON.parse(evt.target.responseText)
+        console.log(res.url);
+        // 展示图片
+        $("#bc_big_report_title")[0].style.opacity = "1";
+        $("#bc_big_report")[0].src = res.url;
+        afterPage();
+      }
+
+      function uploadFailed(evt) {
+        alert("上传文件发生了错误尝试");
+      }
+
+      function uploadCanceled(evt) {
+        alert("上传被用户取消或者浏览器断开连接");
+      }
+
+    // ------------------------------
+    //          检测部分
+    // ------------------------------
+    // 开始检测
+    $("#bc_start_btn").click(function(){
+        loading(); //loading界面
+        $.ajax({
+            url: "/DeepBCDetect",
+            success: function(result,status,xhr){
+                alert("检测成功");
+                console.log(result);
+                // 开始渲染
+                beforePage();
+                $("#bc_result_box")[0].style.display="initial";
+                console.log(result['img_list']);
+                //result = eval(result)
+                imgList = result['img_list'];
+                strList = result['diagnose'];
+                report = result['report_path'];
+                console.log(strList)
+                if(imgList.length == 0){
+                    imgList = ["/static/img/0913_1_1.jpg","/static/img/0913_1_1.jpg"];
+                    strList = ["诊断推测：癌症： 70.7%","诊断推测：癌症 70.7%"];
+                    posList = ["图片1：左乳七点钟","图片2：右乳一点钟方向"];
+                }
+                length = imgList.length;
+                row = $("#bc_resbox_row");
+                // 加载网页版
+                str = "<div class='row'>"
+                for (i=0;i<length;i++){
+                    var diag;
+                    var prob;
+                    if (strList[i]["result"] == "cancer"){
+                        diag = "癌症：";
+                    }else if(strList[i]["result"] == "no_cancer"){
+                        diag = "其它病症或正常：";
+                    }else if(strList[i]["result"] == "other_place"){
+                        diag = "非乳腺部位：";
+                    }else{
+                        diag = "未知";
+                    }
+                    prob = (strList[i]["prob"] * 100).toString().slice(0,6);
+                    divstr  =  " <div class='col-md-6 bc_each_img'> " +
+                                   "<img src='" + imgList[i] + "' > " +
+                                  //  "<span>" + posList[i] + "</span>" +
+                                   "<span>" +diag + prob+ "%</span>" +
+                               " </div>";
+
+                    if(i%2==0 && i!=0){
+                      // row.append("<br>");
+                      str+= "</div><div class = 'row'>"
+                    }
+                    // row.append(divstr);
+                  str += divstr;
+                }
+                str +='</div>'
+                row[0].innerHTML=str;
+
+                // 加载图片报告结果
+                $("#bc_small_report")[0].src =report;
+                $("#bc_down_report")[0].style.display = "initial";
+                $("#bc_down_report")[0].href = report;
+
+                // 取消加载
+                unloading();
+            },
+            error: function(xhr,status,error){
+                alert("检测失败，请重新上传");
+                unloading();
+            }
+         });
+
+    });
+
+
+    // Box加载效果显示
+    function loading(){
+        $("#bc_big_report_title")[0].style.opacity = "0";
+        $("#bc_main_overlay")[0].style.display="initial";
+    }
+    // Box加载取消
+    function unloading(){
+        $("#bc_main_overlay")[0].style.display="none";
+    }
+};
+</script>
+
+
+{% endblock %}

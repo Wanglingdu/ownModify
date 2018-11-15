@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>show</title>
+</head>
+<body>
+    <div class="container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>人名</th>
+                    <th>日期</th>
+                    <th>模型结果</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for info in infos %}
+              <tr>
+                <td>{{ info['name'] }}</td>
+                <td>{{ info['date'] }}</td>
+                <td>{{ info['result'] }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <form method="post" action="{{ url_for('show') }}">
+        <div class="container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>医师结果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for i in range(number) %}
+                    {% if infos[i]['doctor_result']%}
+                    <tr>
+                        <label type="text">{{ infos[i]['doctor_result'] }}</label>
+                    </tr>
+                    {% else %}
+                      <tr>
+                          <input type="text" name="{{ i }}" id="{{ i }}">
+                      </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit">提交修改</button>
+        </div>
+    </form>
+</body>
+</html>
