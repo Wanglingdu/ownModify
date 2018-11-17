@@ -28,7 +28,7 @@
                 <!-- Form Div  -->
                 <div class="dp_upload_form">
                     <!-- This is the form for upload pictures -->
-                    <form class="form-inline" id="upload_img" action="index">
+                    <form class="form-inline" id="upload_img" action="index" method="POST">
                           <div class="text-center">
                             <div id="bc_input_parent" style="height:70px">
                                 <div class="dp_input_bg panel"><span id="dp_bg_txt">上传报告</span> <span id="progressNumber"></span></div>
@@ -60,7 +60,7 @@
                 <div class="dp_upload_form" style="min-height:500px">
                     <!-- This is the big report -->
                     <div>
-                        <div id="bc_big_report_title"><h4>已上X光图片：</h4></div>
+                        <div id="bc_big_report_title"><h4>已上传图片：</h4></div>
                         <img id="bc_big_report">
                     </div>
 
@@ -126,12 +126,14 @@ window.onload = function() {
     });
     // 完成上传后的页面更新
     function afterPage(){
+        //console.log("Arrive")
         str =  "请开始检测";
+        console.log(str);
         $("#dp_bg_txt")[0].innerText = str; //改变文字
         //inputDom[0].disabled = "true"; //无法上传
         //$(".dp_input_bg")[0].style.background = "#eaeaea"; // 颜色变灰
         $("#bc_input_parent")[0].style.display = "none"; // 隐藏input背景
-        startBtn[0].style.display = "initial";           // 重新显示上传按钮
+        startBtn[0].style.display = "initial";           // 重新显示上传按钮 应该是显示开始诊断
         document.getElementById('progressNumber').innerHTML = '';
     }
     // 回到上传前的初始值
@@ -200,13 +202,24 @@ window.onload = function() {
     $("#bc_start_btn").click(function(){
         loading(); //loading界面
         $.ajax({
+            /*
+            A function to be called if the request succeeds. 
+            The function gets passed three arguments: 
+            The data returned from the server, 
+            formatted according to the dataType parameter 
+            or the dataFilter callback function,
+            if specified; a string describing the status; 
+            and the jqXHR (in jQuery 1.4.x, XMLHttpRequest) object
+            */
             url: "/MammogramDetect",
             success: function(result,status,xhr){
                 alert("检测成功");
                 console.log(result);
                 // 开始渲染
                 beforePage();
+                
                 report = result['report_path'];
+                
                 $("#bc_big_report")[0].src = report;
                 $("#bc_down_report")[0].style.display = "initial";
                 $("#bc_down_report")[0].href = report;
