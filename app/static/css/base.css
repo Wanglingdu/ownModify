@@ -1,0 +1,52 @@
+/*color begin*/
+.white{
+    color:#fff;
+}
+
+.red{
+    color:#f98080;
+}
+
+.pink{
+    color:#ff89a4;
+}
+
+.light-pink{
+    color:#fcf7f8;
+}
+
+.deep-red{
+    color:#c9302c;
+}
+
+.grey{
+    color:#0f0f0f;
+}
+/*color end*/
+
+h1{
+    font-family: "微软雅黑";
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.nav-list{
+    text-align: left;
+}
+
+.btn-red{
+    background:#F98080 !important;
+    color: #fff !important;
+    font-size: 14px;
+    border-color:#F98080 !important;
+}
+
+
+#bc_start_btn:hover,#bc_start_btn:focus{
+    color:#fff;
+    background-color:#c9302c !important;
+    border-color:#c9302c !important
+}
+
+
+

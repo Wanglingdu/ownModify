@@ -2,22 +2,82 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block content%}
 
-<!-- Sidbar Start -->
-    <div class="navbar-default sidebar">
-        <div class="sidebar-nav navbar-collapse">
-            <ul class="nav in" id="side-menu">
-                <li>
-                    <div>
-                    <div class="text-center text-muted row dp_date_today" style="margin-top: -30px;">2017</div>
-                    <div class="text-center row">欢迎！<span>{{ session.username }}</span></div>
-                    </div>
-                </li>
-                <li><a class="btn active" href="/index">上传报告</a></li>
-                <li><a class="btn active" href="/show">历史上传</a></li>
-                <!-- <li><a class="btn" href="/help">操作指南</a></li> -->
-            </ul>
+    <div id="navbar" class="navbar navbar-default          ace-save-state">
+        <div class="navbar-container ace-save-state" id="navbar-container">
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+{#                <span class="sr-only">Toggle sidebar</span>#}
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+            </button>
+
+            <div class="navbar-buttons navbar-header pull-right" role="navigation">
+
+                <ul class="nav ace-nav" id="side-menu">
+                    <li class="red dropdown-modal">
+                        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
+                            <img class="nav-user-photo" src="../static/img/user.jpg" alt="Jason's Photo" />
+                            <span class="user-info">
+									{{ session.username }}
+									<small>欢迎您</small>
+
+								</span>
+
+
+                            <i class="ace-icon fa fa-caret-down"></i>
+                        </a>
+
+                        <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                            <li>
+                                <a href="#">
+                                    <i class="ace-icon fa fa-power-off"></i>
+                                    注销
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="navbar-buttons navbar-header pull-right text-muted dp_date_today" role="navigation" style="padding-top:8px;display:inline;color:#fff;line-height:100%">2017</div>
+
+        </div><!-- /.navbar-container -->
+    </div>
+
+    <div id="sidebar" class="sidebar-nav sidebar                  responsive                    ace-save-state" style="margin-top:0;">
+        <!-- /.sidebar-shortcuts -->
+
+        <!-- Sidbar Start -->
+        <ul class="nav nav-list">
+            <li class="active">
+                <a href="/index">
+                    <i class="menu-icon fa fa-picture-o"></i>
+                    <span class="menu-text"> 上传报告 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+            <li class="">
+                <a href="/show">
+                    <i class="menu-icon fa fa-tachometer"></i>
+                    <span class="menu-text"> 历史上传 </span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+
+        </ul><!-- /.nav-list -->
+
+        <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+            <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
         </div>
     </div>
+
+
 <!-- Sidebar End  -->
     <!-- Wrapper Div  -->
     <div id="page-wrapper" style="overflow: auto">
@@ -31,7 +91,7 @@
                     <form class="form-inline" id="upload_img" action="index">
                           <div class="text-center">
                             <div id="bc_input_parent" style="height:70px">
-                                <div class="dp_input_bg panel"><span id="dp_bg_txt">上传报告</span> <span id="progressNumber"></span></div>
+                                <div class="dp_input_bg panel" ><span id="dp_bg_txt">上传报告</span> <span id="progressNumber"></span></div>
                                 <input class="dp_input_file" id="inputFile" name="file" type="file"  multiple webkitdirectory="">
                             </div>
                         </div>
@@ -40,7 +100,7 @@
 
                     <!-- This is the button -->
                     <div id="bc_start">
-                        <button class="btn btn-bcgreen btn-lg" id="bc_start_btn">开始诊断</button>
+                        <button class="btn btn-bcgreen btn-lg btn-red" id="bc_start_btn">开始诊断</button>
                         <br>
                     </div>
 
@@ -60,7 +120,7 @@
                 <div class="dp_upload_form" style="min-height:500px">
                     <!-- This is the big report -->
                     <div>
-                        <div id="bc_big_report_title"><h4>已上X光图片：</h4></div>
+                        <div id="bc_big_report_title"><h4>已上传X光图片：</h4></div>
                         <img id="bc_big_report">
                     </div>
 
@@ -87,7 +147,7 @@
         <div class="col-md-4" style="margin-top:40px">
             <div class="box box-blue">
                 <div class="box-footer">
-                    <a  id="bc_down_report" download="下载报告" class="btn logoutBtn">下载报告</a>
+                    <a  id="bc_down_report" download="下载报告" class="btn logoutBtn" style="display:inline-block">下载报告</a>
                 </div>
                 <!-- /.box-footer-->
               </div>
@@ -102,6 +162,7 @@
 
 
     </div><!-- Wrapper End -->
+    <!-- ace scripts -->
 
 <script>
 // Input file dom

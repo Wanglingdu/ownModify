@@ -114,13 +114,16 @@ body a.btn{
 .dp_input_bg{
     width: 86%;
     height: 70px;
-   /* background: #eaeaea;*/
-    background: #f98080;
+    background: #F98080 !important;
     margin: auto;
     top: 0; left: 0; bottom: 0; right: 0;
     text-align:center;
     position: absolute;
 }
+/*.dp_input_bg:hover,.dp_input_bg:focus{*/
+    /*background-color:#c9302c !important;*/
+    /*border-color:#ac2925*/
+/*}*/
 .dp_input_bg span{/* input file text span*/
     color: #fff;
     line-height:70px;
@@ -148,9 +151,17 @@ body a.btn{
 
 /* Button */
 a.logoutBtn{
-    background:#ff89a4 !important;
+    background:#F98080 !important;
     color: #fff !important;
-    font-size: 16px;
+    font-size: 14px;
+    border-color:#F98080 !important;
+}
+
+
+a.logoutBtn:hover,.logoutBtn:focus{
+    color:#fff;
+    background-color:#c9302c !important;
+    border-color:#c9302c !important
 }
 
 
@@ -161,11 +172,6 @@ a{
     color:#e94565;
 }
 
-a.logoutBtn:hover,.logoutBtn:focus{
-    color:#fff;
-    background-color:#c9302c !important;
-    border-color:#ac2925
-}
 #page-wrapper {
     background: #fcf7f8;
 }
@@ -207,9 +213,11 @@ a.logoutBtn:hover,.logoutBtn:focus{
 @media (min-width:443px){
 #bc_big_report_title{
     background: rgba(178, 142, 150, 0.48);
-    width: 300px;
+    /*width: 300px;*/
+    widtn:80%;
     height: 50px;
-    margin-bottom: -60px;
+    margin:0px auto;
+    /*margin-bottom: -60px;*/
     position: relative;
     padding-left: 30px;
     opacity:0;
