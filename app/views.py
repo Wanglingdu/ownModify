@@ -20,27 +20,38 @@ class LoginForm(FlaskForm):
 @app.route('/show/', methods=["GET", "POST"])
 def lst_history():
     folder_path = './app/static/upload/report'
-    local_service = 'http://192.168.7.239:6112'
+    #同样写死 硬编码
+    #local_service = 'http://192.168.7.239:6112'
+    local_service = 'http://127.0.0.1:5000'
     lst = os.listdir(folder_path)
     name  = []
     time  = []
     label = []
     queue = []
+    
     for one in lst:
         example_inqueue = []
         example_inqueue.append(one[:-20])
         example_inqueue.append(one[-19:-4])
-        path = local_service+ os.path.join(folder_path, one).split('app')[-1]
+        # modify
+        #path = local_service+ os.path.join(folder_path, one).split('app')[-1]
+        #path = local_service+ os.path.join(folder_path, one)
+        path = local_service + 'app' + os.path.join(folder_path, one).split('app')[-1]
+        
+        #D:\ForGit\ownModify\app\static\upload\report\1014_1_1_20171109_091200_report.jpg
+        #modifypath = "file:///D:/ForGit/ownModify/app" + os.path.join(folder_path, one).split('app')[-1]
+
         example_inqueue.append(path)
         queue.append(example_inqueue)
+
     queue.sort(key=lambda x:x[1], reverse=True)
     length = len(queue)
     for i in range(length):
         name.append(queue[i][0])
         time.append(queue[i][1])
         label.append(queue[i][2])
-    return render_template('show0.html')
     return render_template('show.html', name = name, time = time, label = label, length = length)
+    return render_template('show0.html')
     return render_template('show.html')
 
 
@@ -87,7 +98,7 @@ def generate_report(folder_path,save_path):
         if u'RIGHT_MLO' in img_name:
             lst_draw[3] = img_name
     
-    
+    # 生成背景和大小？？
     generated_report_np = np.ones((height, width, channel))
     generated_report_np = generated_report_np * 255 # draw white background
 
@@ -125,6 +136,8 @@ def index():
         for i in range(len(request.files)):
             f.append(request.files.get('report'+str(i)))
         print (f)
+# 这里f应该是想要取得四个图片文件 Calc-Test_P_00038_LEFT_CC
+
         folder_name = ''
         for name in f:
             temp_name = name.filename.split('/')[-1]
@@ -133,19 +146,25 @@ def index():
                 date_and_time = time.strftime('%Y%m%d_%H%M%S',time.localtime(time.time()+ 28800))
                 folder_name = temp_name.replace('LEFT_CC',date_and_time)
         print (folder_name)
+        # 若图片不正确 则显示默认X光错误图片
         if folder_name == '':
             print (default_img)
             return jsonify(url=default_img , is_t_pic = 0)
         
-        
+        # UPLOADED_PATH = 'app/static/upload/upload_img/'
         folder_path = os.path.join(app.config['UPLOADED_PATH'], folder_name)
+        # folder_path = os.path.join(UPLOADED_PATH, folder_name)= app/static/upload/upload_img/Calc-Test_P_00038_20182291_111111
+        # 创建文件夹  app/static/upload/upload_img/修改后的文件夹名
         os.makedirs(folder_path)
+        # 加上后缀名
         for one_img in f:
             img_path = os.path.join(folder_path, one_img.filename.split('/')[-1])
             one_img.save(img_path)
        
         #session["cutted_img_list"] = cutted_img_list
+        # 保存报告的路径 'app/static/upload/Ureport/'
         U_save_report_path = app.config['SAVE_REPORT_PATH']
+        #调用生成报告函数
         Ureport_path = generate_report(folder_path, U_save_report_path)
         session["upload_path"] = folder_path
         session["upload_date"] = datetime.datetime.now()
@@ -190,16 +209,20 @@ def post(url, data):
 
 @app.route('/MammogramDetect',methods=["GET"])
 def MammogramDetect():
+    # DETECT_SERVICE = "http://192.168.7.239:6113/mxnet"
     request_url = app.config['DETECT_SERVICE']
     if request.method == "GET":
         filename = os.path.split(session["upload_path"])[-1]
         postdata = {"img_path":session["upload_path"]}
-        response = post(request_url, postdata)
-        response_str = str(response, encoding = "utf8")
-        response_str = json.loads(response_str)
-        report_path = response_str["report_path"]
+        #此处post 到服务器进行处理返回 但我这里需要写死
+        #response = post(request_url, postdata)
+        #response_str = str(response, encoding = "utf8")
+        #response_str = json.loads(response_str)
+        #report_path = response_str["report_path"]
+        time.sleep(3)
+        report_path = "app/static/upload/report/1014_1_1_20171109_091200_report.jpg"
         print (report_path)
-        re_p = report_path.split('/app')[-1]
+        re_p = report_path.split('app')[-1]
         print (re_p)
         return jsonify(report_path=re_p)
     return jsonify(res="Failed")

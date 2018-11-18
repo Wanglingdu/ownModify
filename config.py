@@ -3,8 +3,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 
 
 #DataBase
-SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:123456@172.17.0.4:3306/deepbc'
-#SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:123456@127.0.0.1:3306/deepbc'
+#SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:123@172.17.0.4:3306/deepbc'
+SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:123@127.0.0.1:3306/deepbc'
 SQLALCHEMY_COMMIT_ON_TEARDOWN = True
 
 # Upload Image
