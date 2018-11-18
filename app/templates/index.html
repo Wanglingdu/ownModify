@@ -42,7 +42,7 @@
                 </ul>
             </div>
             <div class="pull-right" style="width:20px;"> &nbsp; &nbsp; &nbsp; &nbsp; </div>
-            <div class="navbar-buttons navbar-header pull-right text-muted dp_date_today" role="navigation" style="padding-top:8px;display:inline;color:#fff;line-height:100%">2017</div>
+            <div class="navbar-buttons navbar-header pull-right text-muted dp_date_today" role="navigation" style="padding-top:15px;display:inline;color:#fff;line-height:100%">2017</div>
 
         </div><!-- /.navbar-container -->
     </div>
@@ -76,11 +76,19 @@
             <i id="sidebar-toggle-icon" class="ace-icon fa fa-angle-double-left ace-save-state" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
         </div>
     </div>
-
-
 <!-- Sidebar End  -->
+
     <!-- Wrapper Div  -->
-    <div id="page-wrapper" style="overflow: auto">
+    <div id="page-wrapper" style="overflow: auto;margin-left: 0;">
+        <div class="page-header">
+            <h4><i class="ace-icon fa fa-home home-icon"></i>
+                Deep BC-X
+                <small>
+                    <i class="ace-icon fa fa-angle-double-right"></i>
+                    上传报告
+                </small>
+            </h4>
+        </div><!-- /.page-header -->
 
         <!-- CONTROL TABLE -->
         <div class="col-md-8" style="margin-top:40px">
@@ -91,7 +99,7 @@
                     <form class="form-inline" id="upload_img" action="index">
                           <div class="text-center">
                             <div id="bc_input_parent" style="height:70px">
-                                <div class="dp_input_bg panel" ><span id="dp_bg_txt">上传报告</span> <span id="progressNumber"></span></div>
+                                <div class="dp_input_bg panel" ><span id="dp_bg_txt"><i class="ace-icon fa  fa-cloud-upload"> </i>上传报告</span> <span id="progressNumber"></span></div>
                                 <input class="dp_input_file" id="inputFile" name="file" type="file"  multiple webkitdirectory="">
                             </div>
                         </div>
@@ -100,7 +108,7 @@
 
                     <!-- This is the button -->
                     <div id="bc_start">
-                        <button class="btn btn-bcgreen btn-lg btn-red" id="bc_start_btn">开始诊断</button>
+                        <button class="btn  btn-lg btn-red" id="bc_start_btn">开始诊断</button>
                         <br>
                     </div>
 
@@ -120,7 +128,7 @@
                 <div class="dp_upload_form" style="min-height:500px">
                     <!-- This is the big report -->
                     <div>
-                        <div id="bc_big_report_title"><h4>已上传X光图片：</h4></div>
+                        <div id="bc_big_report_title"><h4>X光图片上传成功：</h4></div>
                         <img id="bc_big_report">
                     </div>
 
@@ -147,7 +155,7 @@
         <div class="col-md-4" style="margin-top:40px">
             <div class="box box-blue">
                 <div class="box-footer">
-                    <a  id="bc_down_report" download="下载报告" class="btn logoutBtn" style="display:inline-block">下载报告</a>
+                   <a  id="bc_down_report" download="下载报告" class="btn logoutBtn"><i class="ace-icon fa fa-cloud-download"> </i>下载报告</a>
                 </div>
                 <!-- /.box-footer-->
               </div>
@@ -197,8 +205,8 @@ window.onload = function() {
     }
     // 回到上传前的初始值
     function beforePage(){
-        str =  "再次上传报告";
-        $("#dp_bg_txt")[0].innerText = str; //改变文字
+        str =  "<i class=\"ace-icon fa  fa-cloud-upload\"> </i>再次上传报告";
+        $("#dp_bg_txt")[0].innerHTML = str; //改变文字
 
         //inputDom[0].disabled = false; //可以上传
         //$(".dp_input_bg")[0].style.background = "#5cc6c6"; //颜色变青
@@ -243,7 +251,19 @@ window.onload = function() {
         // 展示图片
         $("#bc_big_report_title")[0].style.opacity = "1";
         $("#bc_big_report")[0].src = res.url;
-        afterPage();
+        if(res.url!=="/static/img/default.png"){
+            afterPage();
+        }else{
+            (function (){
+                str =  "<i class=\"ace-icon fa  fa-cloud-upload\"> </i>重新上传报告";
+                $("#dp_bg_txt")[0].innerHTML= str; //改变文字
+                //inputDom[0].disabled = "true"; //无法上传
+                //$(".dp_input_bg")[0].style.background = "#eaeaea"; // 颜色变灰
+                $("#bc_input_parent")[0].style.display = "initial"; // 隐藏input背景
+                $("#bc_big_report_title")[0].style.display="none";
+                document.getElementById('progressNumber').innerHTML = '';
+            })();
+        }
       }
 
       function uploadFailed(evt) {
